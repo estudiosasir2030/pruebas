@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lista de Ciudades</title>
-  <!-- Bootstrap (CDN) -->
+  <!-- Bootstrap para estilos -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
   <style>
-    /* Estilo personalizado para reducir la anchura de las columnas */
-    .table thead th, 
-    .table tbody td {
-      /* Ajusta el width según necesites */
-      width: 120px; 
-      white-space: nowrap; /* evita que el texto salte de línea */
+    /* Ajusta ancho de columnas para que sean más estrechas */
+    .table td, .table th {
+      width: 120px;  /* Ajusta según necesites */
+      white-space: nowrap; /* Evita que el texto salte de línea */
     }
   </style>
 </head>
@@ -26,10 +24,8 @@
         <h2>Tabla de Población</h2>
         <div id="tablaPoblacion" class="table-responsive mb-5"></div>
       </div>
-      
-      <!-- Espacio amplio en medio -->
+      <!-- Espacio en medio -->
       <div class="col-md-2"></div>
-      
       <!-- Columna 2: Tabla de Área -->
       <div class="col-md-5">
         <h2>Tabla de Área</h2>
@@ -38,27 +34,29 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS (CDN) -->
+  <!-- Bootstrap JS (opcional) -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
   <script>
+    // Aquí ya usamos el separador de punto y coma:
+    const SEPARADOR = ';';
+
     // Función para cargar un archivo CSV, parsearlo y devolver un array de objetos
     async function loadCSV(url) {
       const response = await fetch(url);
       const text = await response.text();
 
-      // Separamos por líneas
-      const lines = text.trim().split('\n'); 
+      // Separar por líneas
+      const lines = text.trim().split('\n');
       // Primera línea: cabeceras
-      // Si tu CSV usa comas, split(','); si usa punto y coma, split(';')
-      const headers = lines[0].split(','); 
+      const headers = lines[0].split(SEPARADOR);
       // Resto de líneas: datos
       const data = lines.slice(1).map(line => {
-        const values = line.split(','); 
+        const values = line.split(SEPARADOR);
         let obj = {};
         headers.forEach((header, i) => {
-          obj[header] = values[i];
+          obj[header] = values[i] || '';
         });
         return obj;
       });
@@ -68,15 +66,16 @@
 
     // Función para crear tabla HTML a partir de un array de objetos
     function createTableHTML(data) {
-      if(!data || data.length === 0) return '<p>No hay datos</p>';
+      if (!data || data.length === 0) return '<p>No hay datos</p>';
 
       // Obtener cabeceras
       const headers = Object.keys(data[0]);
-      // Clase 'table-sm' para reducir padding vertical
       let html = '<table class="table table-sm table-bordered table-striped">';
       // Encabezado
       html += '<thead class="thead-dark"><tr>';
-      headers.forEach(h => { html += `<th>${h}</th>`; });
+      headers.forEach(h => {
+        html += `<th>${h}</th>`;
+      });
       html += '</tr></thead>';
       // Cuerpo
       html += '<tbody>';
